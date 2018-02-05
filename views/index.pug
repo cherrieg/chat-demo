@@ -1,0 +1,94 @@
+extends layout
+
+block content
+  head
+   meta(charset='UTF-8')
+   h1= home
+
+   #container.col
+    #main.col
+      .page_header 切瑞 • 聊天小程序
+      #divAll.page_body_qr_head_padding
+        #demo(calss='record')
+    script(type='text/javascript').
+      var divs = 0;
+      
+      function addDiv() {
+      var oDivAll = document.getElementById('divAll');
+      var oDemo = document.getElementById('demo');
+      var oDiv = document.createElement("DIV");
+      var chatDiv = document.createElement("DIV");
+      var oDivMiro = document.createElement("DIV");
+      var chatDivMiro = document.createElement("DIV");
+      //聊天小头像
+      var bigImg = document.createElement("img");
+      bigImg.src="/images/tuan.jpg";
+      var myImg = document.createElement("img");
+      myImg.src="/images/xin.jpg";
+
+      //聊天对话框
+      oDiv.id = "div" + divs;
+      chatDiv.id = "chatDiv" + divs;
+      oDivMiro.id = "divMiro" + divs;
+      chatDivMiro.id = "chatDivMiro" + divs;
+
+      //所有div样式
+      oDiv.className = "record";
+      chatDiv.className = "chat";
+      oDivMiro.className = "recordMiro";
+      chatDivMiro.className = "chatMiro";
+      bigImg.className = "imgMy";
+      myImg.className = "imgChat";
+
+      //“我”对话框和头像
+      oDivAll.insertBefore(oDiv,oDemo);
+      oDiv.appendChild(myImg);
+      oDiv.appendChild(oDivMiro);
+
+      //“机器人”对话框和头像
+      oDivAll.insertBefore(chatDiv,oDemo);
+      chatDiv.appendChild(bigImg); 
+      chatDiv.appendChild(chatDivMiro);
+      
+      //AJax发送数据接收数据
+      Post(chatDivMiro.id);
+      
+      //获取输入框数据，以及清除输入框数据
+      getEle(oDivMiro.id).innerHTML = getEle('word').value;
+      document.getElementById("word").value="";
+      divs++;
+
+      //设置滚动条一直往下拉
+      var box = document.getElementById('divAll');
+      box.scrollTop = box.scrollHeight;
+      }
+
+      function getEle(id) {
+      return document.getElementById(id);
+      }
+      
+      //点击enter键时发送
+      function EnterPress(e){ //传入 event     
+      var e = e || window.event;     
+      if(e.keyCode == 13){     
+      document.getElementById("send_btn").click();     
+      }     
+      } 
+      
+      function Post(id)
+      {
+      var xmlhttp = new XMLHttpRequest(); 
+      xmlhttp.open("POST", "/new");
+      xmlhttp.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+      xmlhttp.send(JSON.stringify({name:escape(document.getElementById('word').value)}));
+      xmlhttp.onreadystatechange=function()
+      {
+      if (xmlhttp.readyState==4 && xmlhttp.status==200)
+      {
+      document.getElementById(id).innerHTML=xmlhttp.responseText;
+      }
+      }
+      }
+    #inputDiv.inputDivCSS
+      input#word(type='text', name='inputWord', onkeypress="EnterPress()", placeholder='please input ...')
+      button#send_btn(type='button', onclick='addDiv();') 发送
