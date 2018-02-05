@@ -1,4 +1,4 @@
-这是一个完整的用express实现的chat box demo. 
+这是一个完整的用express实现的chat box demo, 克隆到本地运行就可以玩了.
 
 运行命令: `npm start`
 
